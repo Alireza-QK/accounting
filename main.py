@@ -1,5 +1,11 @@
-from src.user import User
+from utils import choice_option
 
-user1 = User.create('pouya', 'Qodbanan', 'pouya', 5654, 23, 'pouya', '03956')
-print(user1)
+print('Choice option: ')
+print('1 Create new account')
+print('2 Login')
+choice = input('Please choice: ')
+
+choice_option(choice)
+
+
 
