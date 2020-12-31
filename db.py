@@ -7,17 +7,17 @@ def connection():
     cursor = connect.cursor()
     # Create Table User
     sql_user = """
-        CREATE TABLE IF NOT EXISTS User (
-            user_id INTEGER PRIMARY KEY,
-            first_name VARCHAR (70),
-            last_name VARCHAR (70),
-            username VARCHAR (80),
-            password VARCHAR (150),
-            age tinyint (120),
-            email VARCHAR (254),
-            phone_number VARCHAR (12)
-        )
-    """
+            CREATE TABLE IF NOT EXISTS User (
+                id INTEGER PRIMARY KEY,
+                first_name VARCHAR (70),
+                last_name VARCHAR (70),
+                username VARCHAR (80),
+                password VARCHAR (150),
+                age tinyint (120),
+                email VARCHAR (254),
+                phone_number VARCHAR (12)
+            )
+        """
 
     cursor.execute(sql_user)
     connect.commit()
@@ -33,7 +33,6 @@ def get_connection():
 
 # Define function create
 def create(table_name, **kwargs):
-
     keys = ', '.join(kwargs.keys())
     values = ''
     command = f"INSERT INTO {table_name} ({keys}) VALUES"
@@ -66,11 +65,11 @@ def get_all(table_name):
 
 
 # find by id
-def find_by_id(table_name, user_id):
+def find_by_id(table_name, id):
     connect = get_connection()
     cur = connect.cursor()
-    if type(user_id) == int:
-        sql = "SELECT * FROM {} WHERE id={}".format(table_name, user_id)
+    if type(id) == int:
+        sql = "SELECT * FROM {} WHERE id={}".format(table_name, id)
         cur.execute(sql)
         row = cur.fetchone()
         connect.close()
@@ -78,7 +77,7 @@ def find_by_id(table_name, user_id):
 
 
 # Update
-def update(table_name, user_id, **kwargs):
+def update(table_name, id, **kwargs):
     connect = get_connection()
     cur = connect.cursor()
 
@@ -92,7 +91,7 @@ def update(table_name, user_id, **kwargs):
         key_and_val = key_and_val.strip(', ')
 
     # Query sql
-    sql = f"UPDATE {table_name} SET {key_and_val} WHERE id={user_id}"
+    sql = f"UPDATE {table_name} SET {key_and_val} WHERE id={id}"
     result = cur.execute(sql)
     connect.commit()
     connect.close()
@@ -101,13 +100,35 @@ def update(table_name, user_id, **kwargs):
 
 
 # Delete
-def delete(table_name, user_id):
+def delete(table_name, id):
     connect = get_connection()
     cur = connect.cursor()
 
-    sql = f"DELETE FROM {table_name} WHERE id={user_id}"
+    sql = f"DELETE FROM {table_name} WHERE id={id}"
     res = cur.execute(sql)
     connect.commit()
     connect.close()
 
     return res
+
+
+# Check is username
+def check_exsist(table_name, and_or='and', **kwargs):
+    connect = get_connection()
+    cur = connect.cursor()
+    sql = f"SELECT * FROM {table_name} WHERE "
+
+    row = ''
+    for key, value in kwargs.items():
+        if type(value) == int:
+            row += f"{key}={value} " + and_or
+        else:
+            row += f" {key}='{value}' " + and_or
+    if row.endswith(' ' + and_or):
+        row = row.strip(' ' + and_or)
+    sql += row
+    result = cur.execute(sql)
+    data = result.fetchone()
+    if data:
+        return True
+    return False

@@ -1,11 +1,8 @@
-from src.constants import OPTION_CHOICE
 
+def input_user(text):
+    """ This input check is empty or not """
+    input_user_var = input(f'{text}: ')
+    if input_user_var == '':
+        input_user(text)
 
-def choice_option(choice):
-
-    print(list(OPTION_CHOICE.keys()))
-
-    if choice in list(OPTION_CHOICE.keys()):
-        print('yes')
-    else:
-        print('Invalid choice')
+    return input_user_var
